@@ -17,6 +17,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_YANKACTIVE)     += cpufreq_yankactive.o
 obj-$(CONFIG_CPU_FREQ_GOV_LIONHEART)	+= cpufreq_lionheart.o
 obj-$(CONFIG_CPU_FREQ_GOV_DANCEDANCE)	+= cpufreq_dancedance.o
 obj-$(CONFIG_CPU_FREQ_GOV_BIOSHOCK)	+= cpufreq_bioshock.o
+obj-$(CONFIG_CPU_FREQ_GOV_INTELLIMM)	+= cpufreq_intellimm.o
 obj-$(CONFIG_CPU_BOOST)                 += cpu-boost.o
 
 # CPUfreq cross-arch helpers
