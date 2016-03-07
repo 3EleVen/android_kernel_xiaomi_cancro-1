@@ -47,7 +47,7 @@ static int g_count = 0;
 #define DBS_SWITCH_MODE_TIMEOUT			(1000)
 #define INPUT_EVENT_MIN_TIMEOUT 		(0)
 #define INPUT_EVENT_MAX_TIMEOUT 		(3000)
-#define INPUT_EVENT_TIMEOUT			(500)
+#define INPUT_EVENT_TIMEOUT			(800)
 #define MIN_SAMPLING_RATE_RATIO			(2)
 
 static unsigned int min_sampling_rate;
@@ -285,7 +285,7 @@ static ssize_t store_two_phase_freq(struct kobject *a, struct attribute *b,
 	return count;
 }
 
-static int input_event_min_freq_array[NR_CPUS] = {1728000, 1267200, 1267200, 1267200} ;
+static int input_event_min_freq_array[NR_CPUS] = {1574400, 0, 0, 0} ;
 
 static ssize_t show_input_event_min_freq
 (struct kobject *kobj, struct attribute *attr, char *buf)
