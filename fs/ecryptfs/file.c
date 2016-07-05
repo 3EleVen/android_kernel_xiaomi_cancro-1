@@ -138,6 +138,19 @@ out:
 	return rc;
 }
 
+static int ecryptfs_mmap(struct file *file, struct vm_area_struct *vma)
+{
+	struct file *lower_file = ecryptfs_file_to_lower(file);
+	/*
+	 * Don't allow mmap on top of file systems that don't support it
+	 * natively.  If FILESYSTEM_MAX_STACK_DEPTH > 2 or ecryptfs
+	 * allows recursive mounting, this will need to be extended.
+	 */
+	if (!lower_file->f_op->mmap)
+		return -ENODEV;
+	return ecryptfs_file_mmap(file, vma);
+}
+
 struct kmem_cache *ecryptfs_file_info_cache;
 
 static int read_or_initialize_metadata(struct dentry *dentry)
@@ -359,6 +372,7 @@ const struct file_operations ecryptfs_dir_fops = {
 #ifdef CONFIG_COMPAT
 	.compat_ioctl = ecryptfs_compat_ioctl,
 #endif
+	.mmap = ecryptfs_mmap,
 	.open = ecryptfs_open,
 	.flush = ecryptfs_flush,
 	.release = ecryptfs_release,
