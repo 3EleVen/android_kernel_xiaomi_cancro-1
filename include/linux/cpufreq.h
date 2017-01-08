@@ -406,6 +406,9 @@ extern struct cpufreq_governor cpufreq_gov_bioshock;
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTELLIMM)
 extern struct cpufreq_governor cpufreq_gov_intellimm;
 #define CPUFREQ_DEFAULT_GOVERNOR        (&cpufreq_gov_intellimm)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_CRAZYACTIVE)
+extern struct cpufreq_governor cpufreq_gov_crazyactive;
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_crazyactive)
 #endif
 
 
