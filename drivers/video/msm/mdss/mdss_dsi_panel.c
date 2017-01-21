@@ -34,6 +34,8 @@
 
 DEFINE_LED_TRIGGER(bl_led_trigger);
 
+extern void lazyplug_enter_lazy(bool enter);
+
 bool display_on = true;
 
 bool is_display_on()
@@ -683,6 +685,8 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 	if (ctrl->on_cmds.cmd_cnt)
 		mdss_dsi_panel_cmds_send(ctrl, &ctrl->on_cmds);
 
+	lazyplug_enter_lazy(false);
+
     mdss_livedisplay_update(ctrl, MODE_UPDATE_ALL);
 
 	pr_info("%s:-\n", __func__);
@@ -708,6 +712,8 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 
 	if (ctrl->off_cmds.cmd_cnt)
 		mdss_dsi_panel_cmds_send(ctrl, &ctrl->off_cmds);
+
+	lazyplug_enter_lazy(true);
 
 	mdss_dsi_panel_cmd_read(ctrl, 0x04, 0x00, (void *)mdss_dsi_dcs_read_cb, rbuf, 8);
 
