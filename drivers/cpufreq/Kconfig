@@ -165,15 +165,6 @@ config CPU_FREQ_DEFAULT_GOV_CRAZYACTIVE
 	   loading your cpufreq low-level hardware driver, using the
 	   'crazyactive' governor for latency-sensitive workloads.
 
-config CPU_FREQ_DEFAULT_GOV_ARTERACTIVE
-	bool "arteractive"
-	select CPU_FREQ_GOV_ARTERACTIVE
-	help
-	  Use the CPUFreq governor 'arteractive' as default. This allows
-	  you to get a full dynamic cpu frequency capable system by simply
-	  loading your cpufreq low-level hardware driver, using the
-	  'arteractive' governor for latency-sensitive workloads.
-
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -334,12 +325,6 @@ config CPU_FREQ_GOV_CRAZYACTIVE
 	  'crazyactive' - This driver adds a dynamic cpufreq policy governor
 	  designed for latency-sensitive workloads.
 	  The governor is based on interactive with just different default settings for optimized balance performance and battery life.
-
-config CPU_FREQ_GOV_ARTERACTIVE
- 	tristate "'arteractive' cpufreq policy governor"
- 	help
- 	  'arteractive' - This driver adds the interactive governor
- 	  from the SM-G900F source drop.
 
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
