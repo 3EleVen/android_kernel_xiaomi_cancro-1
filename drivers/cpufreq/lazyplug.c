@@ -78,14 +78,10 @@
 #undef DEBUG_LAZYPLUG
 
 #define LAZYPLUG_MAJOR_VERSION	1
-#define LAZYPLUG_MINOR_VERSION	3
+#define LAZYPLUG_MINOR_VERSION	4
 
 #define DEF_SAMPLING_MS			(268)
 #define DEF_IDLE_COUNT			(19) /* 268 * 19 = 5092, almost equals to 5 seconds */
-
-#define DUAL_PERSISTENCE		(2500 / DEF_SAMPLING_MS)
-#define TRI_PERSISTENCE			(1700 / DEF_SAMPLING_MS)
-#define QUAD_PERSISTENCE		(1000 / DEF_SAMPLING_MS)
 
 #define BUSY_PERSISTENCE		(3500 / DEF_SAMPLING_MS)
 
@@ -101,7 +97,7 @@ static struct workqueue_struct *lazyplug_boost_wq;
 static unsigned int __read_mostly lazyplug_active = 0;
 module_param(lazyplug_active, uint, 0664);
 
-static unsigned int __read_mostly touch_boost_active = 1;
+static unsigned int __read_mostly touch_boost_active = 0;
 module_param(touch_boost_active, uint, 0664);
 
 static unsigned int __read_mostly nr_run_profile_sel = 0;
