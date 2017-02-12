@@ -8,5 +8,5 @@ cp arch/arm/boot/zImage ~/redkancut/
 cp arch/arm/boot/dt.img ~/redkancut/
 cd ~/redkancut
 rm *.zip
-zip -r9 redkancut_aosp-v3.1.zip * -x README redkancut_aosp-v3.1.zip
+zip -r9 redkancut_aosp-v3.2.zip * -x README redkancut_aosp-v3.2.zip
 cp *.zip /media/sf_ubuntu/release/
