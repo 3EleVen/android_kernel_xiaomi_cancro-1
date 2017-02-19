@@ -118,6 +118,10 @@ config CPU_FREQ_DEFAULT_GOV_ZZMOOVE
 	select CPU_FREQ_GOV_ZZMOOVE
 	help
 	  Use the CPUFreq governor 'zzmoove' as default.
+
+config CPU_FREQ_DEFAULT_GOV_DARKNESS
+ 	bool "darkness"
+ 	select CPU_FREQ_GOV_DARKNESS
 	  
 config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	bool "interactive"
@@ -249,6 +253,9 @@ config CPU_FREQ_GOV_ZZMOOVE
 	depends on CPU_FREQ
 	help
 	'zzmoove' - a custom governor.
+
+config CPU_FREQ_GOV_DARKNESS
+	tristate "'darkness' cpufreq policy governor"
 	  
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
