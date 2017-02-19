@@ -128,7 +128,16 @@ config CPU_FREQ_DEFAULT_GOV_IMPULSE
 	select CPU_FREQ_GOV_IMPULSE
 	help
 	  Use the CPUFreq governor 'impulse' as default.
-	  
+
+config CPU_FREQ_DEFAULT_GOV_CRAZYACTIVE
+ 	bool "crazyactive"
+  	select CPU_FREQ_GOV_CRAZYACTIVE
+	help
+	Use the CPUFreq governor 'crazyactive' as default. This allows
+	you to get a full dynamic cpu frequency capable system by simply
+	
+	loading your cpufreq low-level hardware driver, using the
+	'crazyactive' governor for latency-sensitive workloads.	  
 config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	bool "interactive"
 	select CPU_FREQ_GOV_INTERACTIVE
@@ -269,6 +278,13 @@ config CPU_FREQ_GOV_IMPULSE
 	  'impulse' - This driver adds a dynamic cpufreq policy governor
 	  designed for optimized balance between power and performance.
 	  If in doubt, say N.
+
+config CPU_FREQ_GOV_CRAZYACTIVE
+	tristate "'crazyactive' cpufreq policy governor"
+	help
+	'crazyactive' - This driver adds a dynamic cpufreq policy governor
+	designed for latency-sensitive workloads.
+	The governor is based on interactive with just different default settings for optimized balance performance and battery life.
 	  
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
