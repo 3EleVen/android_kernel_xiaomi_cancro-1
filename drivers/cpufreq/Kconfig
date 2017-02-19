@@ -138,6 +138,12 @@ config CPU_FREQ_DEFAULT_GOV_CRAZYACTIVE
 	
 	loading your cpufreq low-level hardware driver, using the
 	'crazyactive' governor for latency-sensitive workloads.	  
+
+config CPU_FREQ_DEFAULT_GOV_INTERACTIVEX
+	bool "interactivex"
+	select CPU_FREQ_GOV_INTERACTIVEX
+	help
+
 config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	bool "interactive"
 	select CPU_FREQ_GOV_INTERACTIVE
@@ -285,6 +291,10 @@ config CPU_FREQ_GOV_CRAZYACTIVE
 	'crazyactive' - This driver adds a dynamic cpufreq policy governor
 	designed for latency-sensitive workloads.
 	The governor is based on interactive with just different default settings for optimized balance performance and battery life.
+
+config CPU_FREQ_GOV_INTERACTIVEX
+	tristate "'interactivex' cpufreq policy governor"
+	default y
 	  
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
