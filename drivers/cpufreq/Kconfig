@@ -133,7 +133,17 @@ config CPU_FREQ_DEFAULT_GOV_CRAZYACTIVE
 	you to get a full dynamic cpu frequency capable system by simply
 	
 	loading your cpufreq low-level hardware driver, using the
-	'crazyactive' governor for latency-sensitive workloads.	  
+	'crazyactive' governor for latency-sensitive workloads.
+
+config CPU_FREQ_DEFAULT_GOV_BARRY_ALLEN
+	bool "barry_allen"
+	select CPU_FREQ_GOV_BARRY_ALLEN
+	help
+	  Use the CPUFreq governor 'barry_allen' as default. This allows
+	  you to get a full dynamic cpu frequency capable system by simply
+	  loading your cpufreq low-level hardware driver, using the
+	  'barry_allen' governor for latency-sensitive workloads.
+	  
 config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	bool "interactive"
 	select CPU_FREQ_GOV_INTERACTIVE
@@ -278,6 +288,23 @@ config CPU_FREQ_GOV_CRAZYACTIVE
 	'crazyactive' - This driver adds a dynamic cpufreq policy governor
 	designed for latency-sensitive workloads.
 	The governor is based on interactive with just different default settings for optimized balance performance and battery life.
+
+config CPU_FREQ_GOV_BARRY_ALLEN
+	tristate "'barry_allen' cpufreq policy governor"
+	help
+	  'barry_allen' - This driver adds a dynamic cpufreq policy governor
+	  designed for latency-sensitive workloads.
+
+	  This governor attempts to reduce the latency of clock
+	  increases so that the system is more responsive to
+	  barry_allen workloads.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called cpufreq_barry_allen.
+
+	  For details, take a look at linux/Documentation/cpu-freq.
+
+	  If in doubt, say N.
 	  
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
