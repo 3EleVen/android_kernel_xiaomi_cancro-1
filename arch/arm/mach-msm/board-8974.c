@@ -180,8 +180,6 @@ void __init msm8974_add_drivers(void)
 		msm_clock_init(&msm8974_clock_init_data);
 	if (get_hw_version_major() == 5)
 		msm_clock_register(&hifi_osc_clk_lookup, 1);
-	tsens_tm_init_driver();
-	msm_thermal_device_init();
 #ifdef CONFIG_ANDROID_RAM_CONSOLE
 	ram_console_debug_init();
 #endif
