@@ -29,33 +29,32 @@
 #include <linux/workqueue.h>
 #include <linux/slab.h>
 
-#define DEF_SAMPLING_RATE			(50000)
-#define DEF_FREQUENCY_DOWN_DIFFERENTIAL		(10)
-#define DEF_FREQUENCY_UP_THRESHOLD		(60)
-#define DEF_FREQUENCY_UP_THRESHOLD_MULTY	(70)
-#define DEF_FREQUENCY_UP_THRESHOLD_ANY_CPU	(70)
-#define DEF_SAMPLING_DOWN_FACTOR		(1)
-#define MAX_SAMPLING_DOWN_FACTOR		(100000)
-#define MICRO_FREQUENCY_DOWN_DIFFERENTIAL	(3)
-#define MICRO_FREQUENCY_MIN_SAMPLE_RATE		(10000)
-#define MIN_FREQUENCY_UP_THRESHOLD		(11)
-#define MAX_FREQUENCY_UP_THRESHOLD		(100)
-#define MIN_FREQUENCY_DOWN_DIFFERENTIAL		(1)
+#define DEF_SAMPLING_RATE                   (50000)
+#define DEF_FREQUENCY_DOWN_DIFFERENTIAL     (10)
+#define DEF_FREQUENCY_UP_THRESHOLD		    (80)
+#define DEF_SAMPLING_DOWN_FACTOR		    (1)
+#define MAX_SAMPLING_DOWN_FACTOR		    (100000)
+#define MICRO_FREQUENCY_DOWN_DIFFERENTIAL   (3)
+#define MICRO_FREQUENCY_UP_THRESHOLD        (95)
+#define MICRO_FREQUENCY_MIN_SAMPLE_RATE     (10000)
+#define MIN_FREQUENCY_UP_THRESHOLD          (11)
+#define MAX_FREQUENCY_UP_THRESHOLD          (100)
+#define MIN_FREQUENCY_DOWN_DIFFERENTIAL     (1)
 
 #ifdef CONFIG_ARCH_MSM8974
-#define DEF_POWER_SAVE_FREQUENCY		(1497600)
-#define DEF_TWO_PHASE_FREQUENCY			(1728000)
-#define DBS_INPUT_EVENT_MIN_FREQ		(1728000)
-#define DEF_FREQUENCY_OPTIMAL			(1728000)
-#define DEF_FREQ_DOWN_STEP			(550000)
-#define DEF_FREQ_DOWN_STEP_BARRIER		(1728000)
+#define DEF_POWER_SAVE_FREQUENCY            (1190400)
+#define DEF_TWO_PHASE_FREQUENCY             (1728000)
+#define DBS_INPUT_EVENT_MIN_FREQ            (1036800)
+#define DEF_FREQUENCY_OPTIMAL               (1190400)
+#define DEF_FREQ_DOWN_STEP                  (550000)
+#define DEF_FREQ_DOWN_STEP_BARRIER          (1190400)
 #else
-#define DEF_POWER_SAVE_FREQUENCY		(750000)
-#define DEF_TWO_PHASE_FREQUENCY			(1300000)
-#define DBS_INPUT_EVENT_MIN_FREQ		(1026000)
-#define DEF_FREQUENCY_OPTIMAL			(702000)
-#define DEF_FREQ_DOWN_STEP			(250000)
-#define DEF_FREQ_DOWN_STEP_BARRIER		(702000)
+#define DEF_POWER_SAVE_FREQUENCY            (750000)
+#define DEF_TWO_PHASE_FREQUENCY             (1300000)
+#define DBS_INPUT_EVENT_MIN_FREQ            (1026000)
+#define DEF_FREQUENCY_OPTIMAL               (702000)
+#define DEF_FREQ_DOWN_STEP                  (250000)
+#define DEF_FREQ_DOWN_STEP_BARRIER          (702000)
 #endif
 
 #define DEF_INPUT_BOOST_DURATION		(6)
@@ -145,7 +144,7 @@ static struct dbs_tuners {
 	unsigned int up_threshold_multi_core;
 	unsigned int down_differential;
 	unsigned int down_differential_multi_core;
-	unsigned int optimal_freq_speed;
+	unsigned int optimal_freq;
 	unsigned int up_threshold_any_cpu_load;
 	unsigned int ignore_nice;
 	unsigned int sampling_down_factor;
@@ -157,17 +156,16 @@ static struct dbs_tuners {
 	unsigned int freq_down_step;
 	unsigned int freq_down_step_barrier;
 } dbs_tuners_ins = {
-	.up_threshold_multi_core = DEF_FREQUENCY_UP_THRESHOLD_MULTY,
+	.up_threshold_multi_core = DEF_FREQUENCY_UP_THRESHOLD,
 	.up_threshold = DEF_FREQUENCY_UP_THRESHOLD,
 	.sampling_down_factor = DEF_SAMPLING_DOWN_FACTOR,
 	.down_differential = DEF_FREQUENCY_DOWN_DIFFERENTIAL,
 	.down_differential_multi_core = MICRO_FREQUENCY_DOWN_DIFFERENTIAL,
-	.up_threshold_any_cpu_load = DEF_FREQUENCY_UP_THRESHOLD_ANY_CPU,
+	.up_threshold_any_cpu_load = DEF_FREQUENCY_UP_THRESHOLD,
 	.ignore_nice = 0,
 	.powersave_bias = 0,
-	.optimal_freq_speed = 1728000,
+	.optimal_freq = DEF_FREQUENCY_OPTIMAL,
 	.shortcut = 0,
-	.io_is_busy = 0,
 	.power_save_freq = DEF_POWER_SAVE_FREQUENCY,
 	.two_phase_freq = DEF_TWO_PHASE_FREQUENCY,
 	.freq_down_step = DEF_FREQ_DOWN_STEP,
@@ -296,7 +294,7 @@ show_one(down_differential, down_differential);
 show_one(sampling_down_factor, sampling_down_factor);
 show_one(ignore_nice_load, ignore_nice);
 show_one(down_differential_multi_core, down_differential_multi_core);
-show_one(optimal_freq_speed, optimal_freq_speed);
+show_one(optimal_freq, optimal_freq);
 show_one(up_threshold_any_cpu_load, up_threshold_any_cpu_load);
 show_one(freq_down_step, freq_down_step);
 show_one(freq_down_step_barrier, freq_down_step_barrier);
@@ -363,7 +361,7 @@ static ssize_t store_down_differential_multi_core(struct kobject *a,
 }
 
 
-static ssize_t store_optimal_freq_speed(struct kobject *a, struct attribute *b,
+static ssize_t store_optimal_freq(struct kobject *a, struct attribute *b,
 				   const char *buf, size_t count)
 {
 	unsigned int input;
@@ -372,7 +370,7 @@ static ssize_t store_optimal_freq_speed(struct kobject *a, struct attribute *b,
 	ret = sscanf(buf, "%u", &input);
 	if (ret != 1)
 		return -EINVAL;
-	dbs_tuners_ins.optimal_freq_speed = input;
+	dbs_tuners_ins.optimal_freq = input;
 	return count;
 }
 
@@ -750,7 +748,7 @@ define_one_global_rw(ignore_nice_load);
 define_one_global_rw(powersave_bias);
 define_one_global_rw(up_threshold_multi_core);
 define_one_global_rw(down_differential_multi_core);
-define_one_global_rw(optimal_freq_speed);
+define_one_global_rw(optimal_freq);
 define_one_global_rw(up_threshold_any_cpu_load);
 define_one_global_rw(input_event_min_freq);
 define_one_global_rw(multi_phase_freq_tbl);
@@ -770,7 +768,7 @@ static struct attribute *dbs_attributes[] = {
 	&shortcut.attr,
 	&up_threshold_multi_core.attr,
 	&down_differential_multi_core.attr,
-	&optimal_freq_speed.attr,
+	&optimal_freq.attr,
 	&up_threshold_any_cpu_load.attr,
 	&input_event_min_freq.attr,
 	&multi_phase_freq_tbl.attr,
@@ -1061,9 +1059,9 @@ set_freq:
 	if (num_of_cpus > 1) {
 		if (avg_load_freq > dbs_tuners_ins.up_threshold_multi_core *
 								policy->cur) {
-			if (policy->cur < dbs_tuners_ins.optimal_freq_speed)
+			if (policy->cur < dbs_tuners_ins.optimal_freq)
 				dbs_freq_increase(policy,
-					dbs_tuners_ins.optimal_freq_speed);
+					dbs_tuners_ins.optimal_freq);
 			return;
 		}
 	}
@@ -1087,13 +1085,13 @@ set_freq:
 			freq_next = policy->min;
 
 		if (num_of_cpus > 1) {
-			if (dbs_tuners_ins.optimal_freq_speed >
+			if (dbs_tuners_ins.optimal_freq >
 				policy->min && avg_load_freq >
 			    ((dbs_tuners_ins.up_threshold_multi_core -
 			    dbs_tuners_ins.down_differential_multi_core) *
 			    policy->cur) &&
-			    freq_next < dbs_tuners_ins.optimal_freq_speed)
-				freq_next = dbs_tuners_ins.optimal_freq_speed;
+			    freq_next < dbs_tuners_ins.optimal_freq)
+				freq_next = dbs_tuners_ins.optimal_freq;
 		}
 
 		if (dbs_tuners_ins.powersave_bias) {
@@ -1388,8 +1386,8 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 				dbs_tuners_ins.sampling_rate =
 					DEF_SAMPLING_RATE;
 
-			if (dbs_tuners_ins.optimal_freq_speed == 0)
-				dbs_tuners_ins.optimal_freq_speed =
+			if (dbs_tuners_ins.optimal_freq == 0)
+				dbs_tuners_ins.optimal_freq =
 						policy->min;
 
 			dbs_init_freq_map_table(policy);
