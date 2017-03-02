@@ -3059,7 +3059,7 @@ config HAS_MACH_MEMUTILS
 
 config FORCE_FAST_CHARGE
 	bool "Force AC charge mode at will"
-	default y
+	depends on QPNP_CHARGER
 	help
 	 A simple sysfs interface to force adapters that
 	 are detected as USB to charge as AC.
