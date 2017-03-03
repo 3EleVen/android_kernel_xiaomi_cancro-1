@@ -27,10 +27,12 @@
 #include <linux/workqueue.h>
 #include <linux/kthread.h>
 #include <linux/slab.h>
+#include <linux/average.h>
 
 #include <mach/kgsl.h>
 static int orig_up_threshold = 90;
 static int g_count = 0;
+static struct ewma smooth_load_avg;
 
 #define DEF_SAMPLING_RATE			(30000)
 #define DEF_FREQUENCY_DOWN_DIFFERENTIAL		(10)
@@ -47,7 +49,7 @@ static int g_count = 0;
 #define DBS_SWITCH_MODE_TIMEOUT			(1000)
 #define INPUT_EVENT_MIN_TIMEOUT 		(0)
 #define INPUT_EVENT_MAX_TIMEOUT 		(3000)
-#define INPUT_EVENT_TIMEOUT			(500)
+#define INPUT_EVENT_TIMEOUT			(800)
 #define MIN_SAMPLING_RATE_RATIO			(2)
 
 static unsigned int min_sampling_rate;
@@ -113,6 +115,7 @@ static	struct cpufreq_frequency_table *tbl = NULL;
 static unsigned int *tblmap[TABLE_SIZE] __read_mostly;
 static unsigned int tbl_select[4];
 static unsigned int up_threshold_level[2] __read_mostly = {95, 85};
+static unsigned int min_threshold_level[4] __read_mostly = {53, 30, 21, 19};
 static int input_event_counter = 0;
 struct timer_list freq_mode_timer;
 
@@ -285,7 +288,7 @@ static ssize_t store_two_phase_freq(struct kobject *a, struct attribute *b,
 	return count;
 }
 
-static int input_event_min_freq_array[NR_CPUS] = {1728000, 1267200, 1267200, 1267200} ;
+static int input_event_min_freq_array[NR_CPUS] = {1574400, 0, 0, 0} ;
 
 static ssize_t show_input_event_min_freq
 (struct kobject *kobj, struct attribute *attr, char *buf)
@@ -801,6 +804,8 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 			max_load_freq = cur_load * policy->cur;
 	}
 
+	ewma_add(&smooth_load_avg, cur_load);
+
 	for_each_online_cpu(j) {
 		struct cpu_dbs_info_s *j_dbs_info;
 		j_dbs_info = &per_cpu(od_cpu_dbs_info, j);
@@ -953,6 +958,10 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 
 		if (freq_next < policy->min)
 			freq_next = policy->min;
+
+		if (FREQ_NEED_BURST(freq_next) &&
+				ewma_read(&smooth_load_avg) > min_threshold_level[num_online_cpus() - 1])
+			freq_next = policy->min + 140000;
 
 		if (num_online_cpus() > 1) {
 			if (max_load_other_cpu >
@@ -1279,8 +1288,7 @@ static int cpufreq_gov_dbs_up_task(void *data)
 		mutex_lock(&this_dbs_info->timer_mutex);
 
 		dbs_freq_increase(policy, this_dbs_info->prev_load, this_dbs_info->input_event_freq);
-		this_dbs_info->prev_cpu_idle = get_cpu_idle_time(cpu,
-				 &this_dbs_info->prev_cpu_wall, dbs_tuners_ins.io_is_busy);
+		this_dbs_info->prev_cpu_idle = get_cpu_idle_time(cpu, &this_dbs_info->prev_cpu_wall, dbs_tuners_ins.io_is_busy);
 
 		mutex_unlock(&this_dbs_info->timer_mutex);
 
@@ -1319,6 +1327,8 @@ static int __init cpufreq_gov_dbs_init(void)
 	}
 
 	spin_lock_init(&input_boost_lock);
+
+	ewma_init(&smooth_load_avg, 1024, 32);
 
 	for_each_possible_cpu(i) {
 		pthread = kthread_create_on_node(cpufreq_gov_dbs_up_task,
@@ -1362,3 +1372,4 @@ fs_initcall(cpufreq_gov_dbs_init);
 module_init(cpufreq_gov_dbs_init);
 #endif
 module_exit(cpufreq_gov_dbs_exit);
+
