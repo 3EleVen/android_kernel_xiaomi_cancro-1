@@ -8,5 +8,5 @@ cp arch/arm/boot/zImage ~/redkancut/
 cp arch/arm/boot/dt.img ~/redkancut/
 cd ~/redkancut
 rm *.zip
-zip -r9 redkancut_cancro.zip * -x README redkancut_cancro.zip
+zip -r9 redkancut_cancro-v5.zip * -x README redkancut_cancro-v5.zip
 cp *.zip /media/sf_ubuntu/release/
