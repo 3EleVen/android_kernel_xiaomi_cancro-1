@@ -25,7 +25,7 @@
 #include <linux/delay.h>
 #include <linux/slab.h>
 
-#define BLU_PLUG_ENABLED 1
+#define BLU_PLUG_ENABLED 0
 #define INIT_DELAY		(60000) /* Initial delay to 60 sec, 4 cores while boot */
 #define DELAY			(500)
 #define UP_THRESHOLD		(90)
