@@ -162,6 +162,12 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVEX
 	  Use the CPUFreq governor 'interactivex' as default. See
 	  interactivex governor help for more details.
 
+config CPU_FREQ_DEFAULT_GOV_PEGASUSQ
+	bool "pegasusq"
+	select CPU_FREQ_GOV_PEGASUSQ
+	help
+	  Use the CPUFreq governor 'pegasusq' as default.
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -329,6 +335,9 @@ config CPU_FREQ_GOV_INTERACTIVEX
 	  parameters for better balance. The defining feature is that it
 	  locks the CPU frequency to the users lowest defined speed when
 	  the screen is off.
+
+config CPU_FREQ_GOV_PEGASUSQ
+	tristate "'pegasusq' cpufreq policy governor"
 
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
